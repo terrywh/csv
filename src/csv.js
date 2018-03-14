@@ -68,19 +68,11 @@ let input = {
 			process.stderr.write("\n");
 			process.stderr.uncork();
 		}
-	}, api = {}, parser;
-
+	}, parser;
+global.api = require("./api.js");
 // 加载所有 API
-function loadApi(dir) {
-	let files = fs.readdirSync(dir);
-	files.forEach(function(file) {
-		if(file.substr(0, 4) == "api.") {
-			api[file.substr(4, file.length - 7)] = require(dir + "/" + file);
-		}
-	});
-}
-loadApi(__dirname); // 系统提供的 API 
-loadApi(process.cwd()); // 加载用户用户当前目录中的 API
+api.load(__dirname); // 系统提供的 API 
+api.load(process.cwd()); // 加载用户用户当前目录中的 API
 // 确认源文件处理程序可用
 (function inputFile() {
 	let stat0 = null, stat1 = null, opts;
