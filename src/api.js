@@ -12,9 +12,9 @@ exports.load = function(dir) {
 	});
 }
 // 基础接口调用
-exports.http = function(uri, query, data, timeout) {
+exports.http = function(uri, query, data, timeout, headers) {
 	let opts = url.parse(uri);
-	opts.headers = {"Connection": "Keep-Alive", "Content-Type": "application/x-www-form-urlencoded" };
+	opts.headers = Object.assign({}, {"Connection": "Keep-Alive", "Content-Type": "application/x-www-form-urlencoded" }, headers);
 	if(typeof data === "object") {
 		data = JSON.stringify(data);
 		opts.headers["Content-Type"] = "application/json";
