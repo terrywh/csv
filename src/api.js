@@ -3,14 +3,28 @@ const fs = require("fs"),
 	http = require("http"),
 	url = require("url");
 // 加载所有 API
-exports.load = function(dir) {
+exports.load = async function(dir) {
 	let files = fs.readdirSync(dir);
-	files.forEach(function(file) {
+	for(let file of files) {
 		if(file.substr(0, 4) == "api." && file.length > 7) {
-			exports[file.substr(4, file.length - 7)] = require(dir + "/" + file);
+			let key = file.substr(4, file.length - 7);
+			exports[key] = require(dir + "/" + file);
+			if(exports[key].init) {
+				await exports[key].init();
+			}
 		}
-	});
+	}
 }
+exports.stop = function() {
+	exports.stopped = true;
+};
+exports.end = async function() {
+	for(let key in exports) {
+		if(exports[key].end) {
+			await exports[key].end();
+		}
+	}
+};
 // 基础接口调用
 exports.http = function(uri, query, data, timeout, headers) {
 	let opts = url.parse(uri);
